@@ -91,7 +91,7 @@ sub Content {
     my $Self = shift;
 
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
-    my $RequestURI = $ParamObject->RequestURI();
+    my $RequestURI  = $ParamObject->RequestURI();
 
     # Locate and verify the desired web service based on the request URI and load its configuration data.
 
@@ -110,7 +110,7 @@ sub Content {
     }
 
     # URI is empty or invalid.
-    if ( ! %WebserviceGetData ) {
+    if ( !%WebserviceGetData ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Could not determine WebserviceID or Webservice from query string '$RequestURI'",
@@ -348,8 +348,8 @@ sub Content {
             DataInclude => \%DataInclude,
             ErrorStage  => 'ProviderRequestProcess',
             Summary     => $Summary,
-            Data        => $FunctionResult->{Data} // $Summary,
-            HTTPStatus  => $FunctionResult->{HTTPStatus} // 500,
+            Data        => $FunctionResult->{Data}     // $Summary,
+            HTTPCode    => $FunctionResult->{HTTPCode} // 500,
         );
     }
 
@@ -429,12 +429,12 @@ sub Content {
     #
 
     my $Response = $Self->{TransportObject}->ProviderGenerateResponse(
-        Success => 1,
-        Data    => $DataOut,
-        HTTPStatus => $FunctionResult->{HTTPStatus} // 200,
+        Success  => 1,
+        Data     => $DataOut,
+        HTTPCode => $FunctionResult->{HTTPCode} // 200,
     );
 
-    if ( ! $Response->{Success} ) {
+    if ( !$Response->{Success} ) {
 
         my $Summary = $FunctionResult->{ErrorMessage} // 'TransportObject returned an error, cancelling Request';
 
@@ -470,7 +470,7 @@ sub _GenerateErrorResponse {
     my $Response = $Self->{TransportObject}->ProviderGenerateResponse(
         Success      => 0,
         ErrorMessage => $Param{ErrorMessage},
-        HTTPStatus   => $Param{HTTPStatus},
+        HTTPCode     => $Param{HTTPCode},
     );
 
     if ( !$Response->{Success} ) {
@@ -499,7 +499,7 @@ handles errors by
         Data             => $ErrorDataStructure,
         OperationObject  => $OperationObject,        # optional
         Operation        => 'OperationName',         # optional
-        HTTPStatus       => 400,                     # optional
+        HTTPCode         => 400,                     # optional
     );
     print STDOUT $Output;
 
@@ -542,7 +542,7 @@ sub _HandleError {
         return $Self->_GenerateErrorResponse(
             DebuggerObject => $Param{DebuggerObject},
             ErrorMessage   => $Param{Summary},
-            HTTPStatus     => $Param{HTTPStatus},
+            HTTPCode       => $Param{HTTPCode},
         ) // '';
     }
 

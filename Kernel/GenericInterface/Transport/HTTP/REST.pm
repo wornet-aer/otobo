@@ -392,7 +392,7 @@ sub ProviderGenerateResponse {
     }
 
     # Check success param.
-    my $HTTPCode = $Param{HTTPStatus} // 200;
+    my $HTTPCode = $Param{HTTPCode} // 200;
     if ( !$Param{Success} ) {
 
         # Create Fault structure.
@@ -402,7 +402,8 @@ sub ProviderGenerateResponse {
             faultstring => $FaultString,
         };
 
-        if ($HTTPCode < 400) {
+        if ( $HTTPCode < 400 ) {
+
             # if it's not an error code, override HTTPCode to 500
             $HTTPCode = 500;
         }
@@ -619,7 +620,7 @@ sub RequesterPerformRequest {
 
     if ( $Param{CustomHeader} ) {
         $Headers = {
-            %{ $Headers },
+            %{$Headers},
             %{ $Param{CustomHeader} },
         };
 
@@ -792,10 +793,12 @@ sub RequesterPerformRequest {
 
     # Only POST, PUT or PATCH have a body. If it is empty
     # (i. e. $Param{Data} = {}), undef is passed to REST::Client.
-    if ( $RestCommand eq 'POST'
-         || $RestCommand eq 'PUT'
-         || $RestCommand eq 'PATCH'
-         ) {
+    if (
+        $RestCommand eq 'POST'
+        || $RestCommand eq 'PUT'
+        || $RestCommand eq 'PATCH'
+        )
+    {
         if ( IsStringWithData( $Param{Data} ) ) {
             $Body = $Param{Data};
         }
@@ -953,7 +956,7 @@ sub _ThrowWebException {
     my $ContentLength = bytes::length( $Param{Content} );
 
     # Log to debugger.
-    my $DebugLevel =  $Param{HTTPCode} eq 200 ? 'debug' : 'error';
+    my $DebugLevel = $Param{HTTPCode} eq 200 ? 'debug' : 'error';
     $Self->{DebuggerObject}->DebugLog(
         DebugLevel => $DebugLevel,
         Summary    => "Returning provider data to remote system (HTTP Code: $Param{HTTPCode})",
